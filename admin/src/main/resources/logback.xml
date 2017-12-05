@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <appender name="GENERAL_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>/var/log/admin/general.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/admin/general.log.%d{yyyy-MM-dd-HH-mm}.%i.log</fileNamePattern>
+
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>20MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <FileNamePattern>/var/log/admin/general.log.%i.log.zip</FileNamePattern>
+      <MinIndex>1</MinIndex>
+      <MaxIndex>10</MaxIndex>
+    </rollingPolicy>
+
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>20MB</MaxFileSize>
+    </triggeringPolicy>
+
+    <encoder>
+      <pattern>%d{yy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36}.%M\(%line\) - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+
+  <appender name="ERROR_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+      <level>ERROR</level>
+      <onMatch>ACCEPT</onMatch>
+      <onMismatch>DENY</onMismatch>
+    </filter>
+    <file>/var/log/admin/error.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>/var/log/admin/error.log.%d{yyyy-MM-dd-HH-mm}.%i.log</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>20MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+    </rollingPolicy>
+
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <FileNamePattern>/var/log/admin/error.log.%i.log.zip</FileNamePattern>
+      <MinIndex>1</MinIndex>
+      <MaxIndex>20</MaxIndex>
+    </rollingPolicy>
+
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>20MB</MaxFileSize>
+    </triggeringPolicy>
+
+    <encoder>
+      <pattern>%d{yy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36}.%M\(%line\) - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <conversionRule conversionWord="syslogStart" converterClass="ch.qos.logback.classic.pattern.SyslogStartConverter"/>
+
+  <appender name="SYSLOG_APPENDER" class="net.logstash.logback.appender.LogstashSocketAppender">
+    <host>127.0.0.1</host>
+    <port>514</port>
+    <prefix class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%syslogStart{LOCAL5} %logger[%thread]: )</pattern>
+    </prefix>
+  </appender>
+
+  <root level="INFO">
+    <appender-ref ref="GENERAL_APPENDER"/>
+    <appender-ref ref="ERROR_APPENDER"/>
+    <!--<appender-ref ref="SYSLOG_APPENDER"/>-->
+  </root>
+</configuration>
